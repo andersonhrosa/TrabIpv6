@@ -18,8 +18,7 @@
 #include "weather.h"
 
 int main(void) {
-    struct addrinfo hints, *srvinfo, *p;
-    struct sockaddr *sa;
+    struct addrinfo hints, *srvinfo;
 
    char buf[INET6_ADDRSTRLEN];
 
@@ -73,13 +72,10 @@ int main(void) {
     // Bind the socket to the srv_addr
     bind(sd, (struct sockaddr *)&srv_addr, sizeof(struct sockaddr_in6));
     // Handle requests (each in its own child process)
-    write(STDOUT_FILENO, "Passou ", 8);
     do {
        // Receive the request
-       write(STDOUT_FILENO, "Passou2 ", 8);
        recvfrom(sd, in, STATION_SIZE, 0,
 	       (struct sockaddr *)&cli_addr, &client_length);
-         write(STDOUT_FILENO, "Passou2 ", 8);
        // Create the child process
        pid = fork();
        if (pid == 0) {
@@ -100,7 +96,6 @@ int main(void) {
                   * dotted decimal format for readability.
                   */
             printf("Port assigned is %d", ntohs(srv_addr.sin6_port));
-                  write(STDOUT_FILENO, "Passou ", 8);
                    /*
                   * Print details of the client/peer and the data received
                   * Receive a message on socket s in buf of maximum size 32 from a client.
@@ -108,7 +103,6 @@ int main(void) {
                   * will be placed into the client data structure and the size of the client
                   * address will be placed into cli_addr_size.
                   */
-                 char buffer[256];
             printf("\nReceived message %s from domain %s internet address %s:%d\n", out,
                                  (cli_addr.sin6_family == AF_INET6?"AF_INET6":"UNKNOWN"),
             inet_ntop(AF_INET6, &(cli_addr.sin6_addr),buf,INET6_ADDRSTRLEN), ntohs(cli_addr.sin6_port));
@@ -122,8 +116,8 @@ int main(void) {
          
     } while(1);
     // /* Free answers after use */
-    // freeaddrinfo(srvinfo);  // All done with this structure
-    close(sd);
+   freeaddrinfo(srvinfo);  // All done with this structure
+   close(sd);
 }
 
 
